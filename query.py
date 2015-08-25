@@ -1,4 +1,5 @@
 import sys
+import argparse
 from contextlib import closing
 import xapian as _x
 
@@ -11,7 +12,15 @@ def _parseq(x_db, query, prefix=''):
     qp.set_stemming_strategy(_x.QueryParser.STEM_SOME)
     return qp.parse_query(query, 0, prefix)
 
-def main(query, author_q, num_lines):
+
+def get_parser():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--keyword', required=True, type=str, help='search keyword')
+    return parser
+
+
+def main(args):
+    query = args.get('keyword')
     x_query = None
     with closing(_x.Database('./xdb/movies.db')) as x_db:
         # setup the query
@@ -27,6 +36,7 @@ def main(query, author_q, num_lines):
             print
 
 if __name__ == '__main__':
-    while len(sys.argv) < 4:
-        sys.argv.append(None)
-    sys.exit(main(*sys.argv[-3:]))
+    try:
+        sys.exit(main(vars(get_parser().parse_args())))
+    except Exception:
+        sys.exit(3)
