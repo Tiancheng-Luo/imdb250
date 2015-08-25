@@ -5,7 +5,7 @@ import errno
 import json
 from contextlib import closing
 import xapian as _x
-from imdb250data import fetch_movies
+from fetch_data import fetch_movies
 
 
 FIELDS = ['Title', 'Plot', "Actors", "Director", "Year", "Rated"]
