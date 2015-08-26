@@ -58,9 +58,9 @@ def main():
             indexer.index_text(actors)
             indexer.increase_termpos()
             indexer.index_text(directors)
-            x_doc.add_term("XYEAR{}".format(year))
+            x_doc.add_term("XY{}".format(year))
             #if value is uppercase, then add : between prefix and value
-            x_doc.add_term("XRATED:{}".format(_format_rated(rated)))
+            x_doc.add_boolean_term("XR:{}".format(_format_rated(rated)))
 
             # save
             x_db.replace_document(rank, x_doc)

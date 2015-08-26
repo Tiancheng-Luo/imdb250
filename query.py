@@ -3,6 +3,8 @@ import argparse
 from contextlib import closing
 import xapian as _x
 
+from index import RATED
+
 def _parseq(x_db, query, prefix=''):
     '''parse and return a QueryParser query'''
     qp = _x.QueryParser()
@@ -12,20 +14,30 @@ def _parseq(x_db, query, prefix=''):
     qp.set_stemming_strategy(_x.QueryParser.STEM_SOME)
     return qp.parse_query(query, 0, prefix)
 
+def _joinq(op, first, sec):
+    if not first:
+        return sec
+    return _x.Query(op, first, sec)
+
 
 def get_parser():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--keyword', required=True, type=str, help='search keyword')
+    parser.add_argument('--rated', nargs='*', choices=RATED)
     return parser
 
 
 def main(args):
-    query = args.get('keyword')
+    keyword = args.get('keyword')
+    rated_list = args.get('rated')
     x_query = None
     with closing(_x.Database('./xdb/movies.db')) as x_db:
         # setup the query
-        if query:
-            x_query = _x.Query(_parseq(x_db, query))
+        x_query = _x.Query(_parseq(x_db, keyword))
+        if rated_list:
+            rated_queries = [_x.Query('XR:{}'.format(rated)) for rated in rated_list]
+            rated_query = _x.Query(_x.Query.OP_OR, rated_queries)
+            x_query = _joinq(_x.Query.OP_FILTER, x_query, rated_query)
 
         # setup the enquire object to perform the query
         enq = _x.Enquire(x_db)
@@ -36,7 +48,5 @@ def main(args):
             print
 
 if __name__ == '__main__':
-    try:
-        sys.exit(main(vars(get_parser().parse_args())))
-    except Exception:
-        sys.exit(3)
+    sys.exit(main(vars(get_parser().parse_args())))
+
