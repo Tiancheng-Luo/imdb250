@@ -58,8 +58,9 @@ def main():
             indexer.index_text(actors)
             indexer.increase_termpos()
             indexer.index_text(directors)
-            x_doc.add_term("XY{}".format(year))
-            #if value is uppercase, then add : between prefix and value
+            x_doc.add_boolean_term("XY{}".format(year))
+            x_doc.add_value(0, _x.sortable_serialise(int(year)))            
+
             x_doc.add_boolean_term("XR:{}".format(_format_rated(rated)))
 
             # save
