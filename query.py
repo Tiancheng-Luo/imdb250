@@ -3,7 +3,7 @@ import argparse
 from contextlib import closing
 import xapian as _x
 
-from index import RATED
+from index import RATED, SLOT_RATED
 
 def _query_parser(x_db):
     '''parse and return a QueryParser query'''
@@ -26,6 +26,7 @@ def get_parser():
     parser.add_argument('--rated', nargs='*', choices=RATED)
     parser.add_argument('--year_range', type=str, help='release year range(e.g: 1950..1975)')
     return parser
+
 
 
 def main(args):
@@ -54,9 +55,19 @@ def main(args):
         enq = _x.Enquire(x_db)
         print str(x_query)
         enq.set_query(x_query)
+
+        # Set up a spy to inspect the rated value
+        spy = _x.ValueCountMatchSpy(SLOT_RATED)
+        enq.add_matchspy(spy)
+
         for res in enq.get_mset(0, x_db.get_doccount(), None, None):
             print res.document.get_data()
             print
+
+        # Fetch and display the spy values
+        facets = {item.term: int(item.termfreq) for item in spy.values()}
+        print "Facets:{}, Total:{} ".format(facets, sum(facets.values()))
+
 
 if __name__ == '__main__':
     sys.exit(main(vars(get_parser().parse_args())))

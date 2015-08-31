@@ -10,6 +10,8 @@ from fetch_data import fetch_movies
 
 FIELDS = ['Title', 'Plot', "Actors", "Director", "Year", "Rated"]
 RATED = ["G", "PG", "PG-13", "R"]
+SLOT_RATED = 0
+
 
 def _format_rated(rated):
     if rated not in RATED:
@@ -61,7 +63,9 @@ def main():
             x_doc.add_boolean_term("XY{}".format(year))
             x_doc.add_value(0, _x.sortable_serialise(int(year)))            
 
-            x_doc.add_boolean_term("XR:{}".format(_format_rated(rated)))
+            rated_value = _format_rated(rated)
+            x_doc.add_boolean_term("XR:{}".format(rated_value))
+            x_doc.add_value(SLOT_RATED, rated_value)
 
             # save
             x_db.replace_document(rank, x_doc)
