@@ -9,8 +9,9 @@ from fetch_data import fetch_movies
 
 
 FIELDS = ['Title', 'Plot', "Actors", "Director", "Year", "Rated"]
-RATED = ["G", "PG", "PG-13", "R"]
-SLOT_RATED = 0
+RATED = ["G", "PG", "PG-13", "R", "N/A"]
+SLOT_YEAR = 0
+SLOT_RATED = 1
 
 
 def _format_rated(rated):
@@ -37,6 +38,7 @@ def main():
 
             # Store the selected fields for display purposes.
             data = {sel: mov[sel] for sel in FIELDS}
+            data['rank'] = rank
             x_doc.set_data(json.dumps(data, encoding='utf8'))
 
             # setup indexer
@@ -61,7 +63,7 @@ def main():
             indexer.increase_termpos()
             indexer.index_text(directors)
             x_doc.add_boolean_term("XY{}".format(year))
-            x_doc.add_value(0, _x.sortable_serialise(int(year)))            
+            x_doc.add_value(SLOT_YEAR, _x.sortable_serialise(int(year)))            
 
             rated_value = _format_rated(rated)
             x_doc.add_boolean_term("XR:{}".format(rated_value))
