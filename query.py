@@ -24,6 +24,7 @@ def _joinq(op, first, sec):
 def get_parser():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--keyword', type=str, help='search keyword')
+    parser.add_argument('--title', type=str, help='search title only')
     parser.add_argument('--rated', nargs='*', choices=RATED)
     parser.add_argument('--year_range', type=str, help='release year range(e.g: 1950..1975)')
     parser.add_argument('--show_facets', dest='show_facets', action='store_true', default=False)
@@ -32,6 +33,7 @@ def get_parser():
 
 def main(args):
     keyword = args.get('keyword')
+    title = args.get('title')
     rated_list = args.get('rated')
     year_range = args.get('year_range')
     show_facets = args.get('show_facets')
@@ -44,6 +46,10 @@ def main(args):
             x_query = qp.parse_query(keyword)
         else:
             x_query = _x.Query.MatchAll
+
+        if title:
+            title_query = qp.parse_query(title, 0, 'S')
+            x_query = _joinq(_x.Query.OP_FILTER, x_query, title_query)
 
         if rated_list:
             rated_queries = [_x.Query('XR:{}'.format(rated)) for rated in rated_list]
