@@ -13,3 +13,7 @@
 - `git clone git@github.com:jingle3276/imdb250.git`
 - `cd imdb250`
 - Run `python index.py`
+
+
+### Query the Search Engine
+- 
