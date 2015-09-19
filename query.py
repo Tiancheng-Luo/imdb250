@@ -1,6 +1,7 @@
 import sys
 import argparse
 from contextlib import closing
+import json
 import xapian as _x
 from index import RATED, SLOT_RATED, SLOT_YEAR
 
@@ -72,7 +73,7 @@ def main(args):
         enq.add_matchspy(spy)
 
         for res in enq.get_mset(0, x_db.get_doccount(), None, None):
-            print res.document.get_data()
+            print json.dumps(res.document.get_data(), indent=4, sort_keys=True)
             print
 
         # Fetch and display the spy values
