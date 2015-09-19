@@ -73,7 +73,7 @@ def main(args):
         enq.add_matchspy(spy)
 
         for res in enq.get_mset(0, x_db.get_doccount(), None, None):
-            print json.dumps(res.document.get_data(), indent=4, sort_keys=True)
+            print json.dumps(json.loads(res.document.get_data()), indent=4, sort_keys=True)
             print
 
         # Fetch and display the spy values
