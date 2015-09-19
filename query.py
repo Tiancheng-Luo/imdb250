@@ -8,8 +8,7 @@ from index import RATED, SLOT_RATED, SLOT_YEAR
 def _query_parser(x_db):
     '''parse and return a QueryParser query'''
     qp = _x.QueryParser()
-    stemmer = _x.Stem("english")
-    qp.set_stemmer(stemmer)
+    qp.set_stemmer(_x.Stem("english"))
     qp.set_database(x_db)
     qp.set_stemming_strategy(_x.QueryParser.STEM_SOME)
     return qp

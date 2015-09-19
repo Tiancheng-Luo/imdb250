@@ -34,9 +34,8 @@ def main():
         for rank, mov in movies:
             # make a new document
             x_doc = _x.Document()
-            imdb_id = mov.get(u'imdbID')
-
-            # Store the selected fields for display purposes.
+            
+            # Store the data blob to the document
             data = {sel: mov[sel] for sel in FIELDS}
             data['rank'] = rank
             x_doc.set_data(json.dumps(data, encoding='utf8'))
@@ -53,7 +52,7 @@ def main():
             year = mov.get(u'Year')
             rated = mov.get(u'Rated')
             
-            x_doc.add_term(imdb_id)
+            x_doc.add_term(mov.get(u'imdbID'))
             indexer.index_text(title, 1, "S")
             indexer.index_text(title)
             indexer.increase_termpos()
@@ -71,7 +70,7 @@ def main():
 
             # save
             x_db.replace_document(rank, x_doc)
-
+        print "indexing done"
 
 if __name__ == '__main__':
     sys.exit(main())
