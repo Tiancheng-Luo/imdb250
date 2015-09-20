@@ -16,8 +16,8 @@
 
 
 ### Query the Search Engine
-- Simple keyword query: `python query.py --keyword 'dream'`
-- Phrase query: `python query.py --keyword '"once again"'`
-- Movie title: `python query.py --title 'king'`
-- Facets on result movies' rating: `python query.py --keyword 'love' --show_facets`
-- Search moives contains word 'love' and rated PG-13 and released between year 1990 to 2000 `python query.py --keyword 'love' --rated PG-13 --year_range '1990..2000'`
+- Moives contain a simple keyword: `python query.py --keyword 'love'`
+- Movies contain a phrase: `python query.py --keyword '"once again"'`
+- Title of movies contain the word 'king': `python query.py --title 'king'`
+- Show facets on result(movie's rating): `python query.py --keyword 'love' --show_facets`
+- Moives contain the word 'love' and are rated PG-13 and released between year 1990 to 2000 `python query.py --keyword 'love' --rated PG-13 --year_range '1990..2000'`
