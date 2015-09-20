@@ -20,4 +20,4 @@
 - Movies contain a phrase: `python query.py --keyword '"once again"'`
 - Title of movies contain the word 'king': `python query.py --title 'king'`
 - Show facets on result(movie's rating): `python query.py --keyword 'love' --show_facets`
-- Moives contain the word 'love' and are rated PG-13 and released between year 1990 to 2000 `python query.py --keyword 'love' --rated PG-13 --year_range '1990..2000'`
+- Moives directed by Steven Spielbert in 1990s `python query.py --keyword '"Steven Spielberg"' --year_range 1990..2000`
