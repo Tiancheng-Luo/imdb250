@@ -1,4 +1,4 @@
-# Xapian Search Application for IMDB 250 
+# IMDB Top 250: A Xapian Search Demo 
 
 ### Installation
 1. Download Xapian
