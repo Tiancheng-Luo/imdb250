@@ -34,11 +34,6 @@ def main():
         for rank, mov in movies:
             # make a new document
             x_doc = _x.Document()
-            
-            # Store the data blob to the document
-            data = {sel: mov[sel] for sel in FIELDS}
-            data['rank'] = rank
-            x_doc.set_data(json.dumps(data, encoding='utf8'))
 
             # setup indexer
             indexer = _x.TermGenerator()
@@ -51,25 +46,30 @@ def main():
             directors = mov.get(u"Director")
             year = mov.get(u'Year')
             rated = mov.get(u'Rated')
-            
-            x_doc.add_term(mov.get(u'imdbID'))
+
+            # index terms
+            indexer.index_text(plot)
             indexer.index_text(title, 1, "S")
             indexer.index_text(title)
-            indexer.increase_termpos()
-            indexer.index_text(plot)
-            indexer.increase_termpos()
-            indexer.index_text(actors)
-            indexer.increase_termpos()
-            indexer.index_text(directors)
-            x_doc.add_boolean_term("XY{}".format(year))
-            x_doc.add_value(SLOT_YEAR, _x.sortable_serialise(int(year)))            
+            indexer.index_text(actors, 0, "A")
+            indexer.index_text(directors, 0, "A")
 
+            # index year as value(serizlized) for range query
+            x_doc.add_value(SLOT_YEAR, _x.sortable_serialise(int(year)))
             rated_value = _format_rated(rated)
-            x_doc.add_boolean_term("XR:{}".format(rated_value))
+            # add a boolean term for filtering on rated
+            x_doc.add_boolean_term("XRATED:{}".format(rated_value))
+            # index rated as value for faceting
             x_doc.add_value(SLOT_RATED, rated_value)
+
+            # store the data blob to the document
+            data = {sel: mov[sel] for sel in FIELDS}
+            data['rank'] = rank
+            x_doc.set_data(json.dumps(data, encoding='utf8'))
 
             # save
             x_db.replace_document(rank, x_doc)
+
         print "indexing done"
 
 if __name__ == '__main__':

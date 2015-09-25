@@ -7,7 +7,7 @@ from index import RATED, SLOT_RATED, SLOT_YEAR
 
 
 def _query_parser(x_db):
-    '''parse and return a QueryParser query'''
+    '''setup and return a QueryParser object'''
     qp = _x.QueryParser()
     qp.set_stemmer(_x.Stem("english"))
     qp.set_database(x_db)
@@ -16,6 +16,7 @@ def _query_parser(x_db):
 
 
 def _joinq(op, first, sec):
+    '''join two queries with an operator'''
     if not first:
         return sec
     return _x.Query(op, first, sec)
@@ -39,7 +40,7 @@ def main(args):
     show_facets = args.get('show_facets')
     
     with closing(_x.Database('./xdb/movies.db')) as x_db:
-        # setup the query
+        # get a query parser
         qp = _query_parser(x_db)
 
         if keyword:
@@ -52,7 +53,7 @@ def main(args):
             x_query = _joinq(_x.Query.OP_FILTER, x_query, title_query)
 
         if rated_list:
-            rated_queries = [_x.Query('XR:{}'.format(rated)) for rated in rated_list]
+            rated_queries = [_x.Query('XRATED:{}'.format(rated)) for rated in rated_list]
             rated_query = _x.Query(_x.Query.OP_OR, rated_queries)
             x_query = _joinq(_x.Query.OP_FILTER, x_query, rated_query)
 
@@ -68,13 +69,12 @@ def main(args):
         print str(x_query)
         enq.set_query(x_query)
 
-        # Set up a spy to inspect the rated value
+        # Set up a spy to inspect value slots on matched documents
         spy = _x.ValueCountMatchSpy(SLOT_RATED)
         enq.add_matchspy(spy)
 
         for res in enq.get_mset(0, x_db.get_doccount(), None, None):
             print json.dumps(json.loads(res.document.get_data()), indent=4, sort_keys=True)
-            print
 
         # Fetch and display the spy values
         if show_facets:
