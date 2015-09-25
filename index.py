@@ -51,8 +51,8 @@ def main():
             indexer.index_text(plot)
             indexer.index_text(title, 1, "S")
             indexer.index_text(title)
-            indexer.index_text(actors, 0, "A")
-            indexer.index_text(directors, 0, "A")
+            indexer.index_text(actors)
+            indexer.index_text(directors)
 
             # index year as value(serizlized) for range query
             x_doc.add_value(SLOT_YEAR, _x.sortable_serialise(int(year)))
