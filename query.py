@@ -59,7 +59,7 @@ def main(args):
 
         if year_range:
             qp.add_valuerangeprocessor(
-                _x.NumberValueRangeProcessor(SLOT_YEAR, '')
+                _x.NumberValueRangeProcessor(SLOT_YEAR)
             )
             year_range_query = qp.parse_query(year_range)
             x_query = _joinq(_x.Query.OP_FILTER, x_query, year_range_query)
@@ -73,6 +73,7 @@ def main(args):
         spy = _x.ValueCountMatchSpy(SLOT_RATED)
         enq.add_matchspy(spy)
 
+        # iterate through the matched set and display the stored json dup
         for res in enq.get_mset(0, x_db.get_doccount(), None, None):
             print json.dumps(json.loads(res.document.get_data()), indent=4, sort_keys=True)
 
